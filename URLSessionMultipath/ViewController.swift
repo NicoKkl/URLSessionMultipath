@@ -2,19 +2,42 @@
 //  ViewController.swift
 //  URLSessionMultipath
 //
-//  Created by Nicokeuk2.0 on 29/03/2020.
 //  Copyright © 2020 NK. All rights reserved.
 //
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, URLSessionDownloadDelegate {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        @IBOutlet weak var buttonAction: UIButton!
+        @IBOutlet weak var label: UILabel!
+    
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            // Do any additional setup after loading the view.
+        }
+        
+        @IBAction func buttonPushed(_ sender: Any) {
+            //File from a MPTCP enabled website.
+            let url = URL(string: "https://multipath-tcp.org/pub/inl.png")!
+            let sessionConfiguration = URLSessionConfiguration.ephemeral
+            
+            if #available(iOS 11.0, *) {
+                sessionConfiguration.multipathServiceType = .interactive
+            }
+            
+            let session = URLSession(configuration: sessionConfiguration,
+                                          delegate: self,
+                                          delegateQueue: OperationQueue.main)
+            
+            let downloadTask = session.downloadTask(with: url)
+            downloadTask.resume()
+        }
+        
+        func urlSession(_ session: URLSession,
+                        downloadTask: URLSessionDownloadTask,
+                        didFinishDownloadingTo location: URL){
+            label.text = "Downloaded"
+        }
     }
-
-
-}
 
